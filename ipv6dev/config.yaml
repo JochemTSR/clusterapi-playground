@@ -1,0 +1,14 @@
+# General settings
+CLUSTER_NAME: scandium
+CONTROL_PLANE_MACHINE_COUNT: 1
+WORKER_MACHINE_COUNT: 2
+KUBERNETES_VERSION: "1.29.1"
+
+# Hetzner-specific settings
+HCLOUD_SSH_KEY: "jochem@titanium" 
+HCLOUD_CONTROL_PLANE_MACHINE_TYPE: cax11
+HCLOUD_WORKER_MACHINE_TYPE: cax11
+HCLOUD_REGION: nbg1
+
+# Overrides
+overridesFolder: /home/jochem/repositories/github/jochemtsr/clusterapi-playground/scandium/overrides

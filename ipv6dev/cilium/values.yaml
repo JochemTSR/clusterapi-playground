@@ -1,0 +1,30 @@
+rollOutPods: true
+
+ipv6:
+  enabled: true
+
+# We still want to enable IPv4, services behind a load balancer will not be
+# reachable without it (the LB talks ipv4 over the private interface)
+ipv4:
+  enabled: true
+
+# We should set this instead of cluster, to ensure Cilium's CIDR range does
+# not accidentally overlap with the range of our underlying network
+ipam:
+  mode: kubernetes
+
+hubble:
+  metrics:
+    enabled:
+      - dns:query
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
+  relay:
+    enabled: true
+    rollOutPods: true
+  ui:
+    enabled: true
+    rollOutPods: true

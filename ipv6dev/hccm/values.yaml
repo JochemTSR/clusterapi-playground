@@ -1,0 +1,37 @@
+env:
+  # This setting configures the CCM to make routes in the private network.
+  # The default is 'true', we want to set this to false. Our pods need IPv6
+  # addressing, and the CCM cannot make these routes for us since there is
+  # only an IPv4 private network. (this also means Cilium cannot use native
+  # routing.)
+  HCLOUD_NETWORK_ROUTES_ENABLED:
+    value: "false"
+
+  # If we do not set this, the family will be "ipv4". Nodes would not receive
+  # an ExternalIP in that case. We want to set this to ipv6 so the CCM
+  # sets the correct external IP on the node
+  HCLOUD_INSTANCES_ADDRESS_FAMILY:
+    value: ipv6
+
+  # Syself ClusterAPI has different naming conventions than the Hetzner CCM
+  # for token keys (by default, CCM expects 'token' a the key)
+  HCLOUD_TOKEN:
+    valueFrom:
+      secretKeyRef:
+        name: hetzner
+        key: hcloud
+
+# Networking needs to be enabled, but config can remain mostly default
+# otherwise. The clusterCIDR setting does not really matter (i think) since
+# Cilium will be responsible for the IP allocations (but I'm not too sure)
+networking:
+  # If enabled, hcloud-ccm will be deployed with networking support.
+  enabled: true
+  # If networking is enabled, clusterCIDR must match the PodCIDR subnet your cluster has been configured with.
+  # The default "10.244.0.0/16" assumes you're using Flannel with default configuration.
+  clusterCIDR: 10.244.0.0/16
+  network:
+    valueFrom:
+      secretKeyRef:
+        name: hetzner
+        key: network
