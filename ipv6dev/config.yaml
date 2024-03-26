@@ -1,5 +1,5 @@
 # General settings
-CLUSTER_NAME: scandium
+CLUSTER_NAME: ipv6-cluster
 CONTROL_PLANE_MACHINE_COUNT: 1
 WORKER_MACHINE_COUNT: 2
 KUBERNETES_VERSION: "1.29.1"
@@ -11,4 +11,4 @@ HCLOUD_WORKER_MACHINE_TYPE: cax11
 HCLOUD_REGION: nbg1
 
 # Overrides
-overridesFolder: /home/jochem/repositories/github/jochemtsr/clusterapi-playground/scandium/overrides
+overridesFolder: /home/jochem/repositories/github/jochemtsr/clusterapi-playground/ipv6dev/overrides

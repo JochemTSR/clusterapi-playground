@@ -1,7 +1,7 @@
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 kind: KubeadmConfigTemplate
 metadata:
-  name: scandium-md-0
+  name: ipv6-cluster-md-0
   namespace: default
 spec:
   template:
@@ -63,7 +63,6 @@ spec:
             tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256
       preKubeadmCommands:
       - set -x
-      - env
       - service systemd-resolved restart
       - grep VERSION= /etc/os-release; uname -a
       - export CONTAINERD=1.7.12
@@ -107,7 +106,7 @@ spec:
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: Cluster
 metadata:
-  name: scandium
+  name: ipv6-cluster
   namespace: default
 spec:
   clusterNetwork:
@@ -122,49 +121,49 @@ spec:
   controlPlaneRef:
     apiVersion: controlplane.cluster.x-k8s.io/v1beta1
     kind: KubeadmControlPlane
-    name: scandium-control-plane
+    name: ipv6-cluster-control-plane
   infrastructureRef:
     apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
     kind: HetznerCluster
-    name: scandium
+    name: ipv6-cluster
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineDeployment
 metadata:
   labels:
-    nodepool: scandium-md-0
-  name: scandium-md-0
+    nodepool: ipv6-cluster-md-0
+  name: ipv6-cluster-md-0
   namespace: default
 spec:
-  clusterName: scandium
+  clusterName: ipv6-cluster
   replicas: 2
   selector:
     matchLabels: null
   template:
     metadata:
       labels:
-        nodepool: scandium-md-0
+        nodepool: ipv6-cluster-md-0
     spec:
       bootstrap:
         configRef:
           apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
           kind: KubeadmConfigTemplate
-          name: scandium-md-0
-      clusterName: scandium
+          name: ipv6-cluster-md-0
+      clusterName: ipv6-cluster
       failureDomain: nbg1
       infrastructureRef:
         apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
         kind: HCloudMachineTemplate
-        name: scandium-md-0
+        name: ipv6-cluster-md-0
       version: 1.29.1
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineHealthCheck
 metadata:
-  name: scandium-control-plane-unhealthy-5m
+  name: ipv6-cluster-control-plane-unhealthy-5m
   namespace: default
 spec:
-  clusterName: scandium
+  clusterName: ipv6-cluster
   maxUnhealthy: 100%
   nodeStartupTimeout: 15m
   remediationTemplate:
@@ -185,10 +184,10 @@ spec:
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachineHealthCheck
 metadata:
-  name: scandium-md-0-unhealthy-5m
+  name: ipv6-cluster-md-0-unhealthy-5m
   namespace: default
 spec:
-  clusterName: scandium
+  clusterName: ipv6-cluster
   maxUnhealthy: 100%
   nodeStartupTimeout: 10m
   remediationTemplate:
@@ -197,7 +196,7 @@ spec:
     name: worker-remediation-request
   selector:
     matchLabels:
-      nodepool: scandium-md-0
+      nodepool: ipv6-cluster-md-0
   unhealthyConditions:
   - status: Unknown
     timeout: 180s
@@ -209,7 +208,7 @@ spec:
 apiVersion: controlplane.cluster.x-k8s.io/v1beta1
 kind: KubeadmControlPlane
 metadata:
-  name: scandium-control-plane
+  name: ipv6-cluster-control-plane
   namespace: default
 spec:
   kubeadmConfigSpec:
@@ -284,10 +283,8 @@ spec:
           profiling: "false"
           secure-port: "10259"
     files:
-    - content: |
-        [Resolve]
-        DNS=2a00:1098:2b::1 2a01:4f8:c2c:123f::1 2a00:1098:2c::1
-        Domains=~github.com githubusercontent.com
+    - content: "[Resolve] \nDNS=2a00:1098:2b::1 2a01:4f8:c2c:123f::1 2a00:1098:2c::1\nDomains=~github.com
+        githubusercontent.com\n"
       owner: root:root
       path: /etc/systemd/resolved.conf.d/nat64.conf
       permissions: "0644"
@@ -369,7 +366,6 @@ spec:
           tls-cipher-suites: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256
     preKubeadmCommands:
     - set -x
-    - env
     - service systemd-resolved restart
     - export CONTAINERD=1.7.12
     - export KUBERNETES_VERSION=$(echo 1.29.1 | sed 's/^v//')
@@ -411,14 +407,14 @@ spec:
     infrastructureRef:
       apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
       kind: HCloudMachineTemplate
-      name: scandium-control-plane
+      name: ipv6-cluster-control-plane
   replicas: 1
   version: 1.29.1
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: HCloudMachineTemplate
 metadata:
-  name: scandium-control-plane
+  name: ipv6-cluster-control-plane
   namespace: default
 spec:
   template:
@@ -433,7 +429,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: HCloudMachineTemplate
 metadata:
-  name: scandium-md-0
+  name: ipv6-cluster-md-0
   namespace: default
 spec:
   template:
@@ -474,7 +470,7 @@ spec:
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
 kind: HetznerCluster
 metadata:
-  name: scandium
+  name: ipv6-cluster
   namespace: default
 spec:
   controlPlaneEndpoint:
